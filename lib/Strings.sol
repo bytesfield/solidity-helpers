@@ -218,25 +218,15 @@ library Strings {
      *
      * @return bool Simply notates if the two string have an equivalent
      */
-    function compareTo(string memory _base, string memory _value)
+    function compare(string calldata _base, string calldata _value)
         internal
         pure
         returns (bool)
     {
-        bytes memory _baseBytes = bytes(_base);
-        bytes memory _valueBytes = bytes(_value);
-
-        if (_baseBytes.length != _valueBytes.length) {
-            return false;
-        }
-
-        for (uint256 i = 0; i < _baseBytes.length; i++) {
-            if (_baseBytes[i] != _valueBytes[i]) {
-                return false;
-            }
-        }
-
-        return true;
+        //coverts strings to bytes 32 and pass it to the keccak256 hash algorithm and compare the results
+        return
+            keccak256(abi.encodePacked(_base)) ==
+            keccak256(abi.encodePacked(_value));
     }
 
     /**
@@ -339,5 +329,31 @@ library Strings {
         }
 
         return _b1;
+    }
+
+    /**
+     * Return a string in a reversed format
+     *
+     * @param _str The string to be reversed
+     * @return string
+     */
+    function reverse(string calldata _str)
+        external
+        pure
+        returns (string memory)
+    {
+        //converts string to bytes in memory
+        bytes memory str = bytes(_str);
+        //creates a new temporary string with same length
+        string memory tmp = new string(str.length);
+        //build a bytes variable based on temp
+        bytes memory _reversed = bytes(tmp);
+
+        //iterate on str which is the bytes string
+        for (uint256 i = 0; i < str.length; i++) {
+            _reversed[str.length - i - 1] = str[i];
+        }
+
+        return string(_reversed);
     }
 }
